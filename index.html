@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Lab Reservation System</title>
+  <style>
+  body {
+    font-family: Georgia, 'Times New Roman', serif;
+    background-color: #F3EFE6;
+    color: #3E4547;
+    padding: 30px;
+  }
+
+  h1 {
+  color: #164A45;
+  font-family: Georgia, 'Times New Roman', serif;
+}
+      .page-header {
+      background-color: #164A45;
+      color: white;
+      padding: 30px;
+      margin: -30px -30px 20px -30px;
+    }
+    .page-header h1 {
+      color: white;
+      margin: 0;
+    }
+    .page-header p {
+      margin-top: 8px;
+      opacity: 0.9;
+    }
+        .lab-name {
+      font-size: 14px;
+      opacity: 0.8;
+      margin-bottom: 10px;
+    }
+
+  label {
+    display: block;
+    margin-top: 12px;
+    font-weight: bold;
+  }
+
+  input, select {
+    padding: 8px;
+    margin-top: 4px;
+    border: 1px solid #C9C0AC;
+    border-radius: 4px;
+  }
+
+  button {
+    background-color: #164A45;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    margin-top: 16px;
+    cursor: pointer;
+  }
+
+  button:hover {
+    background-color: #2C7A72;
+  }
+      .instrument-cards {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-top: 20px;
+    }
+    .instrument-card {
+      border: 1px solid #C9C0AC;
+      border-radius: 8px;
+      padding: 20px;
+      width: 220px;
+      cursor: pointer;
+      background-color: white;
+    }
+    .instrument-card:hover {
+      border-color: #164A45;
+    }
+    .instrument-card h3 {
+      margin: 0 0 8px 0;
+      color: #164A45;
+      font-family: Georgia, 'Times New Roman', serif;
+  font-size: 20px;
+    }
+    .instrument-card a {
+      color: #164A45;
+      font-weight: bold;
+      text-decoration: none;
+    }
+        .sub-tabs {
+      margin-top: 20px;
+      border-bottom: 1px solid #C9C0AC;
+    }
+    .sub-tabs button {
+      background: none;
+      color: #3E4547;
+      border: none;
+      border-bottom: 3px solid transparent;
+      border-radius: 0;
+      padding: 10px 16px;
+      margin-top: 0;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .sub-tabs button.active {
+      color: #164A45;
+      border-bottom: 3px solid #164A45;
+    }
+    .tab-content {
+      display: none;
+      margin-top: 20px;
+    }
+    .tab-content.active {
+      display: block;
+    }
+    .instrument-tabs button {
+  background-color: rgba(255,255,255,0.25);
+  border: none;
+  border-radius: 20px;
+  padding: 10px 24px;
+  margin-right: 10px;
+  margin-top: 0;
+  cursor: pointer;
+  color: white;
+  font-weight: bold;
+  font-size: 16px;
+}
+.instrument-tabs button:hover {
+  background-color: rgba(255,255,255,0.4);
+}
+.sub-tabs button {
+  font-size: 17px;
+  padding: 12px 20px;
+}
+h2 {
+  color: #164A45;
+  font-size: 22px;
+  margin-top: 24px;
+  font-family: Georgia, 'Times New Roman', serif;
+}
+    .section-box {
+      background-color: white;
+      border: 1px solid #C9C0AC;
+      border-radius: 8px;
+      padding: 30px;
+      margin-top: 20px;
+    }
+</style>
+</head>
+<body>
+
+  <!-- HOME PAGE: choose an instrument -->
+  <div id="page-home" class="page">
+    <div class="page-header">
+   <p class="lab-name">Central University Laboratory · Prince Sattam bin Abdulaziz University<br>Materials Characterization Lab — Building 7</p>
+  <h1>Instrument Reservations</h1>
+  <p>Select an instrument to check availability and book a slot. Lab hours: 8:00 AM – 4:00 PM, Sunday–Thursday.</p>
+    <div class="instrument-tabs">
+    <button onclick="showPage('sem')">SEM/EDX</button>
+    <button onclick="showPage('raman')">Raman</button>
+    <button onclick="showPage('xrd')">XRD</button>
+  </div>
+  </div>
+  <div class="section-box">
+<h2>Choose an instrument</h2>
+  <div class="instrument-cards">
+  <div class="instrument-card" onclick="showPage('sem')">
+    <h3>SEM/EDX</h3>
+    <p>Scanning Electron Microscope & EDX</p>
+    <a href="#">Check availability →</a>
+  </div>
+  <div class="instrument-card" onclick="showPage('raman')">
+    <h3>Raman</h3>
+    <p>Raman Spectroscopy</p>
+    <a href="#">Check availability →</a>
+  </div>
+  <div class="instrument-card" onclick="showPage('xrd')">
+    <h3>XRD</h3>
+    <p>X-Ray Diffraction</p>
+    <a href="#">Check availability →</a>
+  </div>
+</div>
+</div>
+  </div>
+  <!-- SEM/EDX PAGE -->
+  <div id="page-sem" class="page" style="display:none;">
+  <button onclick="showPage('home')">&larr; Back</button>
+  <div class="page-header">
+    <h1>SEM/EDX Reservation</h1>
+  </div>
+
+  <div class="sub-tabs">
+    <button id="semTabBookBtn" class="active" onclick="showSemTab('book')">Book a slot</button>
+    <button id="semTabResBtn" onclick="showSemTab('reservations')">Reservations</button>
+  </div>
+
+  <div id="semTabBook" class="tab-content active">
+    <label>Name</label>
+    <input type="text" id="semName">
+    <label>Date</label>
+    <input type="date" id="semDate">
+    <label>Time</label>
+    <select id="semTime">
+      <option value="9">9:00 AM</option>
+      <option value="10">10:00 AM</option>
+      <option value="11">11:00 AM</option>
+    </select>
+    <button id="semBookBtn">Book</button>
+  </div>
+
+  <div id="semTabReservations" class="tab-content">
+    <h2>Upcoming Reservations</h2>
+    <ul id="semReservationsList"></ul>
+  </div>
+</div>
+
+  <!-- RAMAN PAGE -->
+  <div id="page-raman" class="page" style="display:none;">
+  <button onclick="showPage('home')">&larr; Back</button>
+  <div class="page-header">
+    <h1>Raman Reservation</h1>
+  </div>
+
+  <div class="sub-tabs">
+    <button id="ramanTabBookBtn" class="active" onclick="showRamanTab('book')">Book a slot</button>
+    <button id="ramanTabResBtn" onclick="showRamanTab('reservations')">Reservations</button>
+  </div>
+
+  <div id="ramanTabBook" class="tab-content active">
+    <label>Name</label>
+    <input type="text" id="ramanName">
+    <label>Date</label>
+    <input type="date" id="ramanDate">
+    <label>Time</label>
+    <select id="ramanTime">
+      <option value="9">9:00 AM</option>
+      <option value="10">10:00 AM</option>
+      <option value="11">11:00 AM</option>
+    </select>
+    <button id="ramanBookBtn">Book</button>
+  </div>
+
+  <div id="ramanTabReservations" class="tab-content">
+    <h2>Upcoming Reservations</h2>
+    <ul id="ramanReservationsList"></ul>
+  </div>
+</div>
+
+  <!-- XRD PAGE -->
+  <div id="page-xrd" class="page" style="display:none;">
+  <button onclick="showPage('home')">&larr; Back</button>
+  <div class="page-header">
+    <h1>XRD Reservation</h1>
+  </div>
+
+  <div class="sub-tabs">
+    <button id="xrdTabBookBtn" class="active" onclick="showXrdTab('book')">Book a slot</button>
+    <button id="xrdTabResBtn" onclick="showXrdTab('reservations')">Reservations</button>
+  </div>
+
+  <div id="xrdTabBook" class="tab-content active">
+    <label>Name</label>
+    <input type="text" id="xrdName">
+    <label>Date</label>
+    <input type="date" id="xrdDate">
+    <label>Time</label>
+    <select id="xrdTime">
+      <option value="9">9:00 AM</option>
+      <option value="10">10:00 AM</option>
+      <option value="11">11:00 AM</option>
+    </select>
+    <button id="xrdBookBtn">Book</button>
+  </div>
+
+  <div id="xrdTabReservations" class="tab-content">
+    <h2>Upcoming Reservations</h2>
+    <ul id="xrdReservationsList"></ul>
+  </div>
+</div>
+
+  <script>
+    var SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwXsg3e7Ssw6t63feFF8JUii_CeyaV--Swhl3_jbZeOi-RVx0UXk6IL92ZubHCj3VfK/exec";
+    function showPage(name) {
+      document.querySelectorAll('.page').forEach(function(p) {
+        p.style.display = 'none';
+      });
+      document.getElementById('page-' + name).style.display = 'block';
+    }
+    function showSemTab(tab) {
+  document.getElementById('semTabBook').classList.remove('active');
+  document.getElementById('semTabReservations').classList.remove('active');
+  document.getElementById('semTabBookBtn').classList.remove('active');
+  document.getElementById('semTabResBtn').classList.remove('active');
+
+  if (tab === 'book') {
+    document.getElementById('semTabBook').classList.add('active');
+    document.getElementById('semTabBookBtn').classList.add('active');
+  } else {
+    document.getElementById('semTabReservations').classList.add('active');
+    document.getElementById('semTabResBtn').classList.add('active');
+  }
+}
+    function loadSemReservations() {
+  fetch(SCRIPT_URL + "?instrument=SEM")
+    .then(function(response) { return response.json(); })
+    .then(function(data) {
+      var list = document.getElementById('semReservationsList');
+      list.innerHTML = '';
+      data.forEach(function(r) {
+        var li = document.createElement('li');
+        li.textContent = r.name + ' — ' + r.date + ' at ' + r.time + ' (' + r.status + ')';
+        list.appendChild(li);
+      });
+    });
+}
+
+document.getElementById('semBookBtn').addEventListener('click', function() {
+  var name = document.getElementById('semName').value;
+  var date = document.getElementById('semDate').value;
+  var time = document.getElementById('semTime').value;
+
+  if (name === '' || date === '') {
+    alert('Please enter your name and select a date.');
+    return;
+  }
+
+  var formData = new FormData();
+  formData.append('instrument', 'SEM');
+  formData.append('name', name);
+  formData.append('date', date);
+  formData.append('time', time);
+
+  fetch(SCRIPT_URL, {
+    method: 'POST',
+    body: formData
+  })
+    .then(function(response) { return response.json(); })
+    .then(function(result) {
+      alert('Booked! ' + name + ' — ' + date + ' at ' + time + ':00');
+      loadSemReservations();
+    });
+});
+
+loadSemReservations();
+ function showRamanTab(tab) {
+  document.getElementById('ramanTabBook').classList.remove('active');
+  document.getElementById('ramanTabReservations').classList.remove('active');
+  document.getElementById('ramanTabBookBtn').classList.remove('active');
+  document.getElementById('ramanTabResBtn').classList.remove('active');
+
+  if (tab === 'book') {
+    document.getElementById('ramanTabBook').classList.add('active');
+    document.getElementById('ramanTabBookBtn').classList.add('active');
+  } else {
+    document.getElementById('ramanTabReservations').classList.add('active');
+    document.getElementById('ramanTabResBtn').classList.add('active');
+  }
+}
+
+var ramanReservations = [];
+
+document.getElementById('ramanBookBtn').addEventListener('click', function() {
+  var name = document.getElementById('ramanName').value;
+  var date = document.getElementById('ramanDate').value;
+  var time = document.getElementById('ramanTime').value;
+
+  if (name === '' || date === '') {
+    alert('Please enter your name and select a date.');
+    return;
+  }
+
+  var alreadyBooked = ramanReservations.some(function(r) {
+    return r.date === date && r.time === time;
+  });
+
+  if (alreadyBooked) {
+    alert('This time slot is already reserved. Please choose another time.');
+    return;
+  }
+
+  ramanReservations.push({ name: name, date: date, time: time });
+  renderRamanReservations();
+  alert('Booked! ' + name + ' — ' + date + ' at ' + time + ':00');
+});
+
+function renderRamanReservations() {
+  var list = document.getElementById('ramanReservationsList');
+  list.innerHTML = '';
+  ramanReservations.forEach(function(r) {
+    var item = document.createElement('li');
+    item.textContent = r.date + ' — ' + r.time + ':00 — ' + r.name;
+    list.appendChild(item);
+  });
+}
+function showXrdTab(tab) {
+  document.getElementById('xrdTabBook').classList.remove('active');
+  document.getElementById('xrdTabReservations').classList.remove('active');
+  document.getElementById('xrdTabBookBtn').classList.remove('active');
+  document.getElementById('xrdTabResBtn').classList.remove('active');
+
+  if (tab === 'book') {
+    document.getElementById('xrdTabBook').classList.add('active');
+    document.getElementById('xrdTabBookBtn').classList.add('active');
+  } else {
+    document.getElementById('xrdTabReservations').classList.add('active');
+    document.getElementById('xrdTabResBtn').classList.add('active');
+  }
+}
+
+var xrdReservations = [];
+
+document.getElementById('xrdBookBtn').addEventListener('click', function() {
+  var name = document.getElementById('xrdName').value;
+  var date = document.getElementById('xrdDate').value;
+  var time = document.getElementById('xrdTime').value;
+
+  if (name === '' || date === '') {
+    alert('Please enter your name and select a date.');
+    return;
+  }
+
+  var alreadyBooked = xrdReservations.some(function(r) {
+    return r.date === date && r.time === time;
+  });
+
+  if (alreadyBooked) {
+    alert('This time slot is already reserved. Please choose another time.');
+    return;
+  }
+
+  xrdReservations.push({ name: name, date: date, time: time });
+  renderXrdReservations();
+  alert('Booked! ' + name + ' — ' + date + ' at ' + time + ':00');
+});
+
+function renderXrdReservations() {
+  var list = document.getElementById('xrdReservationsList');
+  list.innerHTML = '';
+  xrdReservations.forEach(function(r) {
+    var item = document.createElement('li');
+    item.textContent = r.date + ' — ' + r.time + ':00 — ' + r.name;
+    list.appendChild(item);
+  });
+}
+  </script>
+
+</body>
+</html>
