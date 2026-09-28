@@ -281,6 +281,12 @@ h2 {
 </div>
 
   <script>
+    function showPage(name) {
+  document.querySelectorAll('.page').forEach(function(p) {
+    p.style.display = 'none';
+  });
+  document.getElementById('page-' + name).style.display = 'block';
+}
     var AIRTABLE_BASE_ID = "app3MCd33xByEHKYW";
 var AIRTABLE_TOKEN = "patDGmeYyefcvLFTE.307faa8fe8028c1ecec9257bd11868a507837d5b0f531a22f9179764d7f6bc72";
 
