@@ -297,16 +297,16 @@ function showSemTab(tab) {
     loadSemReservations();
   }
 }
-    var AIRTABLE_BASE_ID = "app3MCd33xByEHKYW";
-var AIRTABLE_TOKEN = "patDGmeYyefcvLFTE.307faa8fe8028c1ecec9257bd11868a507837d5b0f531a22f9179764d7f6bc72";
+    var AIRTABLE_BASE_ID = "";
+var PROXY_URL = "https://lab-airtable-proxy.beeeer1993.workers.dev";
 
 function loadSemReservations() {
-  var url = "https://api.airtable.com/v0/" + AIRTABLE_BASE_ID + "/SEM";
+  var url = PROXY_URL + "/SEM";
 
   fetch(url, {
     method: "GET",
     headers: {
-      "Authorization": "Bearer " + AIRTABLE_TOKEN
+      headers: { "Content-Type": "application/json" }
     }
   })
     .then(function(response) {
@@ -348,11 +348,11 @@ document.getElementById('semBookBtn').addEventListener('click', function() {
 
   btn.disabled = true;
 
-  var checkUrl = "https://api.airtable.com/v0/" + AIRTABLE_BASE_ID + "/SEM?filterByFormula=" +
+  var checkUrl = PROXY_URL + "/SEM?filterByFormula=" +
     encodeURIComponent("{Date}='" + date + "'");
 
   fetch(checkUrl, {
-    headers: { "Authorization": "Bearer " + AIRTABLE_TOKEN }
+    headers: { "Content-Type": "application/json" }
   })
     .then(function(response) { return response.json(); })
     .then(function(checkResult) {
@@ -367,7 +367,7 @@ document.getElementById('semBookBtn').addEventListener('click', function() {
         return;
       }
 
-      var url = "https://api.airtable.com/v0/" + AIRTABLE_BASE_ID + "/SEM";
+      var url = PROXY_URL + "/SEM";
 
       var body = {
         fields: {
@@ -382,7 +382,6 @@ document.getElementById('semBookBtn').addEventListener('click', function() {
       fetch(url, {
         method: "POST",
         headers: {
-          "Authorization": "Bearer " + AIRTABLE_TOKEN,
           "Content-Type": "application/json"
         },
         body: JSON.stringify(body)
@@ -422,13 +421,11 @@ loadSemReservations();
 }
 
 function loadRamanReservations() {
-  var url = "https://api.airtable.com/v0/" + AIRTABLE_BASE_ID + "/Raman";
+  var url = PROXY_URL + "/Raman";
 
   fetch(url, {
     method: "GET",
-    headers: {
-      "Authorization": "Bearer " + AIRTABLE_TOKEN
-    }
+       headers: { "Content-Type": "application/json" }
   })
     .then(function(response) { return response.json(); })
     .then(function(data) {
@@ -467,11 +464,11 @@ document.getElementById('ramanBookBtn').addEventListener('click', function() {
 
   btn.disabled = true;
 
-  var checkUrl = "https://api.airtable.com/v0/" + AIRTABLE_BASE_ID + "/Raman?filterByFormula=" +
+  var checkUrl = PROXY_URL + "/Raman?filterByFormula=" +
     encodeURIComponent("{Date}='" + date + "'");
 
   fetch(checkUrl, {
-    headers: { "Authorization": "Bearer " + AIRTABLE_TOKEN }
+    headers: { "Content-Type": "application/json" }
   })
     .then(function(response) { return response.json(); })
     .then(function(checkResult) {
@@ -486,7 +483,7 @@ document.getElementById('ramanBookBtn').addEventListener('click', function() {
         return;
       }
 
-      var url = "https://api.airtable.com/v0/" + AIRTABLE_BASE_ID + "/Raman";
+      var url = PROXY_URL + "/Raman";
 
       var body = {
         fields: {
@@ -501,7 +498,7 @@ document.getElementById('ramanBookBtn').addEventListener('click', function() {
       fetch(url, {
         method: "POST",
         headers: {
-          "Authorization": "Bearer " + AIRTABLE_TOKEN,
+          
           "Content-Type": "application/json"
         },
         body: JSON.stringify(body)
@@ -541,13 +538,11 @@ function showXrdTab(tab) {
 }
 
 function loadXrdReservations() {
-  var url = "https://api.airtable.com/v0/" + AIRTABLE_BASE_ID + "/XRD";
+  var url = PROXY_URL + "/XRD";
 
   fetch(url, {
     method: "GET",
-    headers: {
-      "Authorization": "Bearer " + AIRTABLE_TOKEN
-    }
+       headers: { "Content-Type": "application/json" }
   })
     .then(function(response) { return response.json(); })
     .then(function(data) {
@@ -586,11 +581,11 @@ document.getElementById('xrdBookBtn').addEventListener('click', function() {
 
   btn.disabled = true;
 
-  var checkUrl = "https://api.airtable.com/v0/" + AIRTABLE_BASE_ID + "/XRD?filterByFormula=" +
+  var checkUrl = PROXY_URL + "/XRD?filterByFormula=" +
     encodeURIComponent("{Date}='" + date + "'");
 
   fetch(checkUrl, {
-    headers: { "Authorization": "Bearer " + AIRTABLE_TOKEN }
+    headers: { "Content-Type": "application/json" }
   })
     .then(function(response) { return response.json(); })
     .then(function(checkResult) {
@@ -605,7 +600,7 @@ document.getElementById('xrdBookBtn').addEventListener('click', function() {
         return;
       }
 
-      var url = "https://api.airtable.com/v0/" + AIRTABLE_BASE_ID + "/XRD";
+      var url = PROXY_URL + "/XRD";
 
       var body = {
         fields: {
@@ -620,7 +615,7 @@ document.getElementById('xrdBookBtn').addEventListener('click', function() {
       fetch(url, {
         method: "POST",
         headers: {
-          "Authorization": "Bearer " + AIRTABLE_TOKEN,
+         
           "Content-Type": "application/json"
         },
         body: JSON.stringify(body)
