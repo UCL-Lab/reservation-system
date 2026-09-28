@@ -415,9 +415,35 @@ loadSemReservations();
   }
 }
 
-var ramanReservations = [];
+function loadRamanReservations() {
+  var url = "https://api.airtable.com/v0/" + AIRTABLE_BASE_ID + "/Raman";
+
+  fetch(url, {
+    method: "GET",
+    headers: {
+      "Authorization": "Bearer " + AIRTABLE_TOKEN
+    }
+  })
+    .then(function(response) { return response.json(); })
+    .then(function(data) {
+      var list = document.getElementById('ramanReservationsList');
+      list.innerHTML = '';
+
+      data.records.forEach(function(record) {
+        var f = record.fields;
+        var li = document.createElement('li');
+        li.textContent = f.Name + ' — ' + f.Date + ' at ' + f.Time + ' (' + f.Status + ')';
+        list.appendChild(li);
+      });
+    })
+    .catch(function(error) {
+      console.error("Error loading Raman reservations:", error);
+    });
+}
 
 document.getElementById('ramanBookBtn').addEventListener('click', function() {
+  var btn = document.getElementById('ramanBookBtn');
+  if (btn.disabled) { return; }
   var name = document.getElementById('ramanName').value;
   var date = document.getElementById('ramanDate').value;
   var time = document.getElementById('ramanTime').value;
@@ -427,29 +453,60 @@ document.getElementById('ramanBookBtn').addEventListener('click', function() {
     return;
   }
 
-  var alreadyBooked = ramanReservations.some(function(r) {
-    return r.date === date && r.time === time;
-  });
+  btn.disabled = true;
 
-  if (alreadyBooked) {
-    alert('This time slot is already reserved. Please choose another time.');
-    return;
-  }
+  var checkUrl = "https://api.airtable.com/v0/" + AIRTABLE_BASE_ID + "/Raman?filterByFormula=" +
+    encodeURIComponent("AND({Date}='" + date + "',{Time}='" + time + "')");
 
-  ramanReservations.push({ name: name, date: date, time: time });
-  renderRamanReservations();
-  alert('Booked! ' + name + ' — ' + date + ' at ' + time + ':00');
+  fetch(checkUrl, {
+    headers: { "Authorization": "Bearer " + AIRTABLE_TOKEN }
+  })
+    .then(function(response) { return response.json(); })
+    .then(function(checkResult) {
+      if (checkResult.records.length > 0) {
+        alert('This time slot is already booked. Please choose another time.');
+        btn.disabled = false;
+        return;
+      }
+
+      var url = "https://api.airtable.com/v0/" + AIRTABLE_BASE_ID + "/Raman";
+
+      var body = {
+        fields: {
+          Name: name,
+          Date: date,
+          Time: time,
+          Status: "Pending"
+        }
+      };
+
+      fetch(url, {
+        method: "POST",
+        headers: {
+          "Authorization": "Bearer " + AIRTABLE_TOKEN,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(body)
+      })
+        .then(function(response) { return response.json(); })
+        .then(function(result) {
+          alert('Booked! ' + name + ' — ' + date + ' at ' + time + ':00');
+          loadRamanReservations();
+          btn.disabled = false;
+        })
+        .catch(function(error) {
+          console.error("Error creating booking:", error);
+          btn.disabled = false;
+        });
+    })
+    .catch(function(error) {
+      console.error("Error checking availability:", error);
+      btn.disabled = false;
+    });
 });
 
-function renderRamanReservations() {
-  var list = document.getElementById('ramanReservationsList');
-  list.innerHTML = '';
-  ramanReservations.forEach(function(r) {
-    var item = document.createElement('li');
-    item.textContent = r.date + ' — ' + r.time + ':00 — ' + r.name;
-    list.appendChild(item);
-  });
-}
+loadRamanReservations();
+
 function showXrdTab(tab) {
   document.getElementById('xrdTabBook').classList.remove('active');
   document.getElementById('xrdTabReservations').classList.remove('active');
