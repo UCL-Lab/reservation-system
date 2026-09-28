@@ -335,6 +335,8 @@ function loadSemReservations() {
 }
 
 document.getElementById('semBookBtn').addEventListener('click', function() {
+  var btn = document.getElementById('semBookBtn');
+  if (btn.disabled) { return; }
   var name = document.getElementById('semName').value;
   var date = document.getElementById('semDate').value;
   var time = document.getElementById('semTime').value;
@@ -343,7 +345,7 @@ document.getElementById('semBookBtn').addEventListener('click', function() {
     alert('Please enter your name and select a date.');
     return;
   }
-
+ btn.disabled = true;
   var url = "https://api.airtable.com/v0/" + AIRTABLE_BASE_ID + "/SEM";
 
   var body = {
@@ -364,12 +366,14 @@ document.getElementById('semBookBtn').addEventListener('click', function() {
     body: JSON.stringify(body)
   })
     .then(function(response) { return response.json(); })
-    .then(function(result) {
+        .then(function(result) {
       alert('Booked! ' + name + ' — ' + date + ' at ' + time + ':00');
       loadSemReservations();
+      btn.disabled = false;
     })
     .catch(function(error) {
       console.error("Error creating booking:", error);
+      btn.disabled = false;
     });
 });
 
