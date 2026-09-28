@@ -281,44 +281,35 @@ h2 {
 </div>
 
   <script>
-    var SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwle7iWHM2P-rGrTcUesgZudHFQNZfX15edxqjt_OlUtb9jmSBgFGWvGBaff7EdZ8Kv/exec";
-    function showPage(name) {
-      document.querySelectorAll('.page').forEach(function(p) {
-        p.style.display = 'none';
-      });
-      document.getElementById('page-' + name).style.display = 'block';
+    var AIRTABLE_BASE_ID = "app3MCd33xByEHKYW";
+var AIRTABLE_TOKEN = "patDGmeYyefcvLFTE.307faa8fe8028c1ecec9257bd11868a507837d5b0f531a22f9179764d7f6bc72";
+
+function loadSemReservations() {
+  var url = "https://api.airtable.com/v0/" + AIRTABLE_BASE_ID + "/SEM";
+
+  fetch(url, {
+    method: "GET",
+    headers: {
+      "Authorization": "Bearer " + AIRTABLE_TOKEN
     }
-    function showSemTab(tab) {
-  document.getElementById('semTabBook').classList.remove('active');
-  document.getElementById('semTabReservations').classList.remove('active');
-  document.getElementById('semTabBookBtn').classList.remove('active');
-  document.getElementById('semTabResBtn').classList.remove('active');
+  })
+    .then(function(response) {
+      return response.json();
+    })
+    .then(function(data) {
+      var list = document.getElementById('semReservationsList');
+      list.innerHTML = '';
 
-  if (tab === 'book') {
-    document.getElementById('semTabBook').classList.add('active');
-    document.getElementById('semTabBookBtn').classList.add('active');
-  } else {
-    document.getElementById('semTabReservations').classList.add('active');
-    document.getElementById('semTabResBtn').classList.add('active');
-  }
-}
-    function loadSemReservations() {
-  var callbackName = 'semCallback_' + Date.now();
-  window[callbackName] = function(data) {
-    var list = document.getElementById('semReservationsList');
-    list.innerHTML = '';
-    data.forEach(function(r) {
-      var li = document.createElement('li');
-      li.textContent = r.name + ' — ' + r.date + ' at ' + r.time + ' (' + r.status + ')';
-      list.appendChild(li);
+      data.records.forEach(function(record) {
+        var f = record.fields;
+        var li = document.createElement('li');
+        li.textContent = f.Name + ' — ' + f.Date + ' at ' + f.Time + ' (' + f.Status + ')';
+        list.appendChild(li);
+      });
+    })
+    .catch(function(error) {
+      console.error("Error loading SEM reservations:", error);
     });
-    delete window[callbackName];
-    script.remove();
-  };
-
-  var script = document.createElement('script');
-  script.src = SCRIPT_URL + "?instrument=SEM&callback=" + callbackName;
-  document.body.appendChild(script);
 }
 
 document.getElementById('semBookBtn').addEventListener('click', function() {
@@ -331,21 +322,32 @@ document.getElementById('semBookBtn').addEventListener('click', function() {
     return;
   }
 
-  var formData = new FormData();
-  formData.append('instrument', 'SEM');
-  formData.append('name', name);
-  formData.append('date', date);
-  formData.append('time', time);
+  var url = "https://api.airtable.com/v0/" + AIRTABLE_BASE_ID + "/SEM";
 
-  fetch(SCRIPT_URL, {
-    method: 'POST',
-    redirect: 'follow',
-    body: formData
+  var body = {
+    fields: {
+      Name: name,
+      Date: date,
+      Time: time,
+      Status: "Pending"
+    }
+  };
+
+  fetch(url, {
+    method: "POST",
+    headers: {
+      "Authorization": "Bearer " + AIRTABLE_TOKEN,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(body)
   })
     .then(function(response) { return response.json(); })
     .then(function(result) {
       alert('Booked! ' + name + ' — ' + date + ' at ' + time + ':00');
       loadSemReservations();
+    })
+    .catch(function(error) {
+      console.error("Error creating booking:", error);
     });
 });
 
