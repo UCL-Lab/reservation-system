@@ -438,7 +438,7 @@ function loadRamanReservations() {
       data.records.forEach(function(record) {
         var f = record.fields;
         var li = document.createElement('li');
-        li.textContent = f.Name + ' — ' + f.Date + ' at ' + f.Time + ' (' + f.Status + ')';
+        li.textContent = f.Name + ' — ' + f.Date + ' ' + f.StartTime + '–' + f.EndTime + ' (' + f.Status + ')';
         list.appendChild(li);
       });
     })
@@ -452,25 +452,36 @@ document.getElementById('ramanBookBtn').addEventListener('click', function() {
   if (btn.disabled) { return; }
   var name = document.getElementById('ramanName').value;
   var date = document.getElementById('ramanDate').value;
-  var time = document.getElementById('ramanTime').value;
+  var startTime = document.getElementById('ramanStartTime').value;
+  var endTime = document.getElementById('ramanEndTime').value;
 
-  if (name === '' || date === '') {
-    alert('Please enter your name and select a date.');
+  if (name === '' || date === '' || startTime === '' || endTime === '') {
+    alert('Please fill in your name, date, start time and end time.');
+    return;
+  }
+
+  if (endTime <= startTime) {
+    alert('End time must be after start time.');
     return;
   }
 
   btn.disabled = true;
 
   var checkUrl = "https://api.airtable.com/v0/" + AIRTABLE_BASE_ID + "/Raman?filterByFormula=" +
-    encodeURIComponent("AND({Date}='" + date + "',{Time}='" + time + "')");
+    encodeURIComponent("{Date}='" + date + "'");
 
   fetch(checkUrl, {
     headers: { "Authorization": "Bearer " + AIRTABLE_TOKEN }
   })
     .then(function(response) { return response.json(); })
     .then(function(checkResult) {
-      if (checkResult.records.length > 0) {
-        alert('This time slot is already booked. Please choose another time.');
+      var overlap = checkResult.records.some(function(record) {
+        var f = record.fields;
+        return startTime < f.EndTime && endTime > f.StartTime;
+      });
+
+      if (overlap) {
+        alert('This time range overlaps with an existing booking. Please choose another time.');
         btn.disabled = false;
         return;
       }
@@ -481,7 +492,8 @@ document.getElementById('ramanBookBtn').addEventListener('click', function() {
         fields: {
           Name: name,
           Date: date,
-          Time: time,
+          StartTime: startTime,
+          EndTime: endTime,
           Status: "Pending"
         }
       };
@@ -496,7 +508,7 @@ document.getElementById('ramanBookBtn').addEventListener('click', function() {
       })
         .then(function(response) { return response.json(); })
         .then(function(result) {
-          alert('Booked! ' + name + ' — ' + date + ' at ' + time + ':00');
+          alert('Booked! ' + name + ' — ' + date + ' ' + startTime + '–' + endTime);
           loadRamanReservations();
           btn.disabled = false;
         })
