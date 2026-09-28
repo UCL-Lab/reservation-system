@@ -303,7 +303,7 @@ h2 {
   }
 }
     function loadSemReservations() {
-  fetch(SCRIPT_URL + "?instrument=SEM")
+  fetch(SCRIPT_URL + "?instrument=SEM", { redirect: "follow" })
     .then(function(response) { return response.json(); })
     .then(function(data) {
       var list = document.getElementById('semReservationsList');
@@ -334,6 +334,7 @@ document.getElementById('semBookBtn').addEventListener('click', function() {
 
   fetch(SCRIPT_URL, {
     method: 'POST',
+    redirect: 'follow',
     body: formData
   })
     .then(function(response) { return response.json(); })
@@ -344,6 +345,7 @@ document.getElementById('semBookBtn').addEventListener('click', function() {
 });
 
 loadSemReservations();
+
  function showRamanTab(tab) {
   document.getElementById('ramanTabBook').classList.remove('active');
   document.getElementById('ramanTabReservations').classList.remove('active');
