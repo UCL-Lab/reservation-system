@@ -281,7 +281,7 @@ h2 {
 </div>
 
   <script>
-    var SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw8Pmh68DF1lYmQ2F0PlJQVIe2ri-Do-Ht18x9Mq57s5QtCpJZcXFOISs2qf61fpGEo/exec";
+    var SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwle7iWHM2P-rGrTcUesgZudHFQNZfX15edxqjt_OlUtb9jmSBgFGWvGBaff7EdZ8Kv/exec";
     function showPage(name) {
       document.querySelectorAll('.page').forEach(function(p) {
         p.style.display = 'none';
@@ -303,17 +303,22 @@ h2 {
   }
 }
     function loadSemReservations() {
-  fetch(SCRIPT_URL + "?instrument=SEM", { redirect: "follow" })
-    .then(function(response) { return response.json(); })
-    .then(function(data) {
-      var list = document.getElementById('semReservationsList');
-      list.innerHTML = '';
-      data.forEach(function(r) {
-        var li = document.createElement('li');
-        li.textContent = r.name + ' — ' + r.date + ' at ' + r.time + ' (' + r.status + ')';
-        list.appendChild(li);
-      });
+  var callbackName = 'semCallback_' + Date.now();
+  window[callbackName] = function(data) {
+    var list = document.getElementById('semReservationsList');
+    list.innerHTML = '';
+    data.forEach(function(r) {
+      var li = document.createElement('li');
+      li.textContent = r.name + ' — ' + r.date + ' at ' + r.time + ' (' + r.status + ')';
+      list.appendChild(li);
     });
+    delete window[callbackName];
+    script.remove();
+  };
+
+  var script = document.createElement('script');
+  script.src = SCRIPT_URL + "?instrument=SEM&callback=" + callbackName;
+  document.body.appendChild(script);
 }
 
 document.getElementById('semBookBtn').addEventListener('click', function() {
