@@ -345,8 +345,24 @@ document.getElementById('semBookBtn').addEventListener('click', function() {
     alert('Please enter your name and select a date.');
     return;
   }
- btn.disabled = true;
-  var url = "https://api.airtable.com/v0/" + AIRTABLE_BASE_ID + "/SEM";
+
+  btn.disabled = true;
+
+  var checkUrl = "https://api.airtable.com/v0/" + AIRTABLE_BASE_ID + "/SEM?filterByFormula=" +
+    encodeURIComponent("AND({Date}='" + date + "',{Time}='" + time + "')");
+
+  fetch(checkUrl, {
+    headers: { "Authorization": "Bearer " + AIRTABLE_TOKEN }
+  })
+    .then(function(response) { return response.json(); })
+    .then(function(checkResult) {
+      if (checkResult.records.length > 0) {
+        alert('This time slot is already booked. Please choose another time.');
+        btn.disabled = false;
+        return;
+      }
+
+      var url = "https://api.airtable.com/v0/" + AIRTABLE_BASE_ID + "/SEM";
 
   var body = {
     fields: {
@@ -365,14 +381,19 @@ document.getElementById('semBookBtn').addEventListener('click', function() {
     },
     body: JSON.stringify(body)
   })
-    .then(function(response) { return response.json(); })
+            .then(function(response) { return response.json(); })
         .then(function(result) {
-      alert('Booked! ' + name + ' — ' + date + ' at ' + time + ':00');
-      loadSemReservations();
-      btn.disabled = false;
+          alert('Booked! ' + name + ' — ' + date + ' at ' + time + ':00');
+          loadSemReservations();
+          btn.disabled = false;
+        })
+        .catch(function(error) {
+          console.error("Error creating booking:", error);
+          btn.disabled = false;
+        });
     })
     .catch(function(error) {
-      console.error("Error creating booking:", error);
+      console.error("Error checking availability:", error);
       btn.disabled = false;
     });
 });
