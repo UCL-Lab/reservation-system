@@ -305,9 +305,7 @@ function loadSemReservations() {
 
   fetch(url, {
     method: "GET",
-    headers: {
       headers: { "Content-Type": "application/json" }
-    }
   })
     .then(function(response) {
       return response.json();
